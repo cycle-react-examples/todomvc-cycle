@@ -1,44 +1,37 @@
 'use strict';
-import Cycle from 'cyclejs';
-let {Rx, h} = Cycle;
-import {propHook} from '../utils';
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import TodoItem from '../components/todo-item';
+/* eslint-enable no-unused-vars */
 
 function vrenderHeader(todosData) {
-  return h('header#header', [
-    h('h1', 'todos'),
-    h('input#new-todo', {
-      type: 'text',
-      value: propHook(elem => { elem.value = todosData.input; }),
-      attributes: {
-        placeholder: 'What needs to be done?'
-      },
-      autofocus: true,
-      name: 'newTodo'
-    })
-  ]);
+  return <header id="header">
+    <h1>todos</h1>
+    <input id="new-todo"
+           type="text"
+           value={todosData.input}
+           placeholder="What needs to be done"
+           autofocus="true"
+           name="newTodo"/>
+  </header>;
 }
 
 function vrenderMainSection(todosData) {
   let allCompleted = todosData.list.reduce((x, y) => x && y.completed, true);
-  return h('section#main', {
-    style: {'display': todosData.list.length ? '' : 'none'}
-  }, [
-    h('input#toggle-all', {
-      type: 'checkbox',
-      checked: allCompleted
-    }),
-    h('ul#todo-list', todosData.list
-      .filter(todosData.filterFn)
-      .map(todoData =>
-        h('todo-item.todo-item', {
-          key: todoData.id,
-          todoid: todoData.id,
-          content: todoData.title,
-          completed: todoData.completed
-        })
-      )
-    )
-  ])
+  let style = {'display': todosData.list.length ? null : 'none'};
+  return <section id="main" style={style}>
+    <input id="toggle-all" type="checkbox" checked={allCompleted} />
+    <ul id="todo-list">
+      {todosData.list
+        .filter(todosData.filterFn)
+        .map(todoData =>
+          <TodoItem key={todoData.id}
+                    todoid={todoData.id}
+                    content={todoData.title}
+                    completed={todoData.completed}/>
+        )}
+    </ul>
+  </section>;
 }
 
 function vrenderFooter(todosData) {
@@ -46,43 +39,46 @@ function vrenderFooter(todosData) {
     .filter(todoData => todoData.completed)
     .length;
   let amountActive = todosData.list.length - amountCompleted;
-  return h('footer#footer', {
-    style: {'display': todosData.list.length ? '' : 'none'}
-  }, [
-    h('span#todo-count', [
-      h('strong', String(amountActive)),
-      ' item' + (amountActive !== 1 ? 's' : '') + ' left'
-    ]),
-    h('ul#filters', [
-      h('li', [
-        h('a' + (todosData.filter === '' ? '.selected' : ''), {
-          attributes: {'href': '#/'}
-        }, 'All')
-      ]),
-      h('li', [
-        h('a' + (todosData.filter === 'active' ? '.selected' : ''), {
-          attributes: {'href': '#/active'}
-        }, 'Active')
-      ]),
-      h('li', [
-        h('a' + (todosData.filter === 'completed' ? '.selected' : ''), {
-          attributes: {'href': '#/completed'}
-        }, 'Completed')
-      ])
-    ]),
-    (amountCompleted > 0 ?
-      h('button#clear-completed', 'Clear completed (' + amountCompleted + ')')
-      : null
-    )
-  ])
+  let style = {'display': todosData.list.length ? null : 'none'};
+
+  return <footer id="footer" style={style}>
+    <span id="todo-count"><strong>{amountActive}</strong>
+      <span> item{amountActive !== 1 ? 's' : ''} left</span>
+    </span>
+    <ul id="filters">
+      <li>
+        <a className={todosData.filter === '' ? '.selected' : ''}
+           href="#/">
+          All
+        </a>
+      </li>
+      <li>
+        <a className={todosData.filter === 'active' ? '.selected' : ''}
+           href="#/active">
+          Active
+        </a>
+      </li>
+      <li>
+        <a className={todosData.filter === 'completed' ? '.selected' : ''}
+           href="#/completed">
+          Completed
+        </a>
+      </li>
+    </ul>
+    {amountCompleted > 0 ?
+      <button id="clear-completed">
+        Clear completed ({amountCompleted})
+      </button> :
+      null}
+  </footer>;
 }
 
 export default function view(todos$) {
   return todos$.map(todos =>
-    h('div', [
-      vrenderHeader(todos),
-      vrenderMainSection(todos),
-      vrenderFooter(todos)
-    ])
+    <div>
+      {vrenderHeader(todos)}
+      {vrenderMainSection(todos)}
+      {vrenderFooter(todos)}
+    </div>
   );
-};
+}

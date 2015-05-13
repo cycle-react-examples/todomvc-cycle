@@ -1,5 +1,5 @@
 'use strict';
-import Cycle from 'cyclejs';
+import Cycle from 'cycle-react';
 import {ENTER_KEY, ESC_KEY} from '../utils';
 
 export default function intent(interactions) {
@@ -7,6 +7,9 @@ export default function intent(interactions) {
     changeRoute$: Cycle.Rx.Observable.fromEvent(window, 'hashchange')
       .map(ev => ev.newURL.match(/\#[^\#]*$/)[0].replace('#', ''))
       .startWith(window.location.hash.replace('#', '')),
+
+    changeInput$: interactions.get('#new-todo', 'input')
+      .map(ev => ev.target.value),
 
     clearInput$: interactions.get('#new-todo', 'keyup')
       .filter(ev => ev.keyCode === ESC_KEY),
@@ -18,14 +21,14 @@ export default function intent(interactions) {
       })
       .map(ev => String(ev.target.value).trim()),
 
-    editTodo$: interactions.get('.todo-item', 'newContent').map(ev => ev.data),
+    editTodo$: interactions.get('.TodoItem', 'newContent').map(ev => ev.data),
 
-    toggleTodo$: interactions.get('.todo-item', 'toggle').map(ev => ev.data),
+    toggleTodo$: interactions.get('.TodoItem', 'toggle').map(ev => ev.data),
 
     toggleAll$: interactions.get('#toggle-all', 'click'),
 
-    deleteTodo$: interactions.get('.todo-item', 'destroy').map(ev => ev.data),
+    deleteTodo$: interactions.get('.TodoItem', 'destroy').map(ev => ev.data),
 
     deleteCompleteds$: interactions.get('#clear-completed', 'click')
   };
-};
+}

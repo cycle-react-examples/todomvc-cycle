@@ -1,6 +1,5 @@
 'use strict';
-import Cycle from 'cyclejs';
-import './components/todo-item';
+import Cycle from 'cycle-react';
 import source from './sources/todos';
 import intent from './intents/todos';
 import model from './models/todos';

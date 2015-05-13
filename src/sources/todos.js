@@ -1,5 +1,5 @@
 'use strict';
-import Cycle from 'cyclejs';
+import Cycle from 'cycle-react';
 
 function merge() {
   let result = {};

@@ -1,10 +1,10 @@
 'use strict';
-import Cycle from 'cyclejs';
+import Cycle from 'cycle-react';
 
 function getFilterFn(route) {
   switch (route) {
-    case '/active': return (task => task.completed === false);
-    case '/completed': return (task => task.completed === true);
+    case '/active': return task => task.completed === false;
+    case '/completed': return task => task.completed === true;
     default: return () => true; // allow anything
   }
 }
@@ -16,6 +16,7 @@ function determineFilter(todosData, route) {
 }
 
 function searchTodoIndex(todosList, todoid) {
+  /* eslint no-constant-condition: 0 */
   let top = todosList.length;
   let bottom = 0;
   let pointerId;
@@ -36,6 +37,11 @@ function searchTodoIndex(todosList, todoid) {
 function makeModification$(intent) {
   let clearInputMod$ = intent.clearInput$.map(() => (todosData) => {
     todosData.input = '';
+    return todosData;
+  });
+
+  let changeInputMod$ = intent.changeInput$.map((content) => (todosData) => {
+    todosData.input = content;
     return todosData;
   });
 
@@ -83,12 +89,12 @@ function makeModification$(intent) {
   let deleteCompletedsMod$ = intent.deleteCompleteds$.map(() => (todosData) => {
     todosData.list = todosData.list
       .filter(todoData => todoData.completed === false);
-    return todosData
+    return todosData;
   });
 
   return Cycle.Rx.Observable.merge(
     insertTodoMod$, deleteTodoMod$, toggleTodoMod$, toggleAllMod$,
-    clearInputMod$, deleteCompletedsMod$, editTodoMod$
+    clearInputMod$, changeInputMod$, deleteCompletedsMod$, editTodoMod$
   );
 }
 

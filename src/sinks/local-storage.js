@@ -11,5 +11,5 @@ export default function localStorageSink(todosData) {
       })
     )
   };
-  localStorage.setItem('todos-cycle', JSON.stringify(savedTodosData))
-};
+  localStorage.setItem('todos-cycle', JSON.stringify(savedTodosData));
+}
